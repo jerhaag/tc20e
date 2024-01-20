@@ -1,4 +1,4 @@
-[![TC20e](https://github.com/jerhaag/tc20e/blob/master/icons/logo.png)](https://tc20e.total-connect.eu/)
+[![Total Connect 2.0E](https://github.com/jerhaag/tc20e/blob/main/icons/logo.png)](https://tc20e.total-connect.eu/)
 
 [![version_badge](https://img.shields.io/github/v/release/jerhaag/tc20e?label=Latest%20release&style=for-the-badge&cacheSeconds=3600)](https://github.com/jerhaag/tc20e/releases/latest)
 [![download_badge](https://img.shields.io/github/downloads/jerhaag/tc20e/total?style=for-the-badge&cacheSeconds=3600)](https://github.com/jerhaag/tc20e/releases/latest)
