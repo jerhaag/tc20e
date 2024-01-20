@@ -1,0 +1,10 @@
+{
+  "domain": "tc20e",
+  "name": "Total Connect 2.0E",
+  "codeowners": ["@jerhaag"],
+  "config_flow": true,
+  "documentation": "https://github.com/jerhaag/tc20e",
+  "iot_class": "cloud_polling",
+  "version": "0.1.0",
+  "requirements": ["bs4==0.0.2"]
+}
