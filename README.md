@@ -12,7 +12,7 @@ Capabilities:
 - Partial Arm (Arm Home)
 - Disarm
 
-Update interval is 120sec (TC20E website is very slow).
+Update interval is 180sec (TC20E website is very slow).
 
 > Warning: This code may break if the vendor is making changes to its website. If that's the case, please open up an issue. Otherwise, wait for an update, as for the foreseeable future, I will be using this integration myself.
 
