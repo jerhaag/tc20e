@@ -1,4 +1,5 @@
 """Config flow for Total Connect 2.0E integration."""
+
 from __future__ import annotations
 
 import base64
@@ -58,7 +59,7 @@ async def validate_input(hass: core.HomeAssistant, auth_id: str) -> None:
     except AttributeError:
         LOGGER.error("Failed to retrieve Session ID: %d", response.status)
         await logout()
-        raise CannotConnect
+        raise CannotConnect from AttributeError
 
     if response.status not in (200, 204) or session_id is None:
         LOGGER.error("Failed to login to retrieve Session ID: %d", response.status)

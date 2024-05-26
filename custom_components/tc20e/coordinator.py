@@ -1,4 +1,5 @@
 """TC20E alarm coordinator."""
+
 from __future__ import annotations
 
 import asyncio
@@ -62,12 +63,12 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
                 )
                 self.alarmstatus = 100
 
-        except (UpdateFailed, ConfigEntryAuthFailed) as error:
+        except (UpdateFailed, ConfigEntryAuthFailed, CannotConnectError) as error:
             raise HomeAssistantError(
-                f"Could not arm/disarm TC20E on error {str(error)}"
+                f"Could not arm/disarm TC20E on error {error!s}"
             ) from error
 
-        await self.async_request_refresh()
+        # await self.async_request_refresh()
 
     async def _async_update_data(self) -> None:
         """Fetch info from TC20E."""
@@ -79,9 +80,9 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
                 TC20E_URL + "/applicationservice/domoweb/panel/commands/status"
             )
 
-        except (UpdateFailed, ConfigEntryAuthFailed) as error:
+        except (UpdateFailed, ConfigEntryAuthFailed, CannotConnectError) as error:
             raise HomeAssistantError(
-                f"Could not retrieve alarm status on error {str(error)}"
+                f"Could not retrieve alarm status on error {error!s}"
             ) from error
 
         # await self.async_request_refresh()
@@ -100,10 +101,10 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
             async with asyncio.timeout(TIMEOUT):
                 await self._login()
 
-        except asyncio.TimeoutError as error:
+        except TimeoutError as error:
             LOGGER.warning("Timeout during login %s", str(error))
             self.request = False
-            raise CannotConnectError
+            raise CannotConnectError from error
 
         LOGGER.debug("Login passed")
 
@@ -125,10 +126,10 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
                     url, headers=headers, params=params, json=json
                 )
 
-        except asyncio.TimeoutError:
+        except TimeoutError as error:
             LOGGER.warning("Timeout when sending command to TC20E")
             await self._logout()
-            return None
+            raise CannotConnectError from error
 
         except Exception as error:
             LOGGER.debug("Exception on request: %s", error)
@@ -163,10 +164,10 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
                                 headers=headers,
                             )
 
-                    except asyncio.TimeoutError:
+                    except TimeoutError as error:
                         LOGGER.warning("Timeout when sending command to TC20E")
                         await self._logout()
-                        return None
+                        raise CannotConnectError from error
 
                     except Exception as error:
                         LOGGER.debug("Exception on request: %s", error)
@@ -302,7 +303,7 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
         except AttributeError:
             LOGGER.error("Failed to retrieve Session ID: %d", response.status)
             await self._logout()
-            raise CannotConnectError
+            raise CannotConnectError from AttributeError
 
         if self._session_id is None:
             LOGGER.error("Failed to retrieve Session ID: %d", response.status)

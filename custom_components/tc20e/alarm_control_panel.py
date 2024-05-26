@@ -1,4 +1,5 @@
 """Alarm Control Panel for TC20E integration."""
+
 from __future__ import annotations
 
 from homeassistant.components.alarm_control_panel import (
@@ -78,18 +79,24 @@ class TC20EAlarmPanel(
         """Disarm alarm."""
         command = "disarm"
         await self.coordinator.setalarm(command)
+        if alarm_state := self.coordinator.alarmstatus:
+            self._attr_state = ALARM_STATE_TO_HA_STATE[alarm_state]
         self.async_write_ha_state()
 
     async def async_alarm_arm_away(self) -> None:
         """Arm alarm away."""
         command = "full"
         await self.coordinator.setalarm(command)
+        if alarm_state := self.coordinator.alarmstatus:
+            self._attr_state = ALARM_STATE_TO_HA_STATE[alarm_state]
         self.async_write_ha_state()
 
     async def async_alarm_arm_home(self) -> None:
         """Arm alarm away."""
         command = "partial"
         await self.coordinator.setalarm(command)
+        if alarm_state := self.coordinator.alarmstatus:
+            self._attr_state = ALARM_STATE_TO_HA_STATE[alarm_state]
         self.async_write_ha_state()
 
     @callback
