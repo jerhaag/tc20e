@@ -75,7 +75,7 @@ class TC20EAlarmPanel(
             "display_name": self._displayname,
         }
 
-    async def async_alarm_disarm(self) -> None:
+    async def async_alarm_disarm(self, code=None) -> None:
         """Disarm alarm."""
         command = "disarm"
         await self.coordinator.setalarm(command)
@@ -83,7 +83,7 @@ class TC20EAlarmPanel(
             self._attr_state = ALARM_STATE_TO_HA_STATE[alarm_state]
         self.async_write_ha_state()
 
-    async def async_alarm_arm_away(self) -> None:
+    async def async_alarm_arm_away(self, code=None) -> None:
         """Arm alarm away."""
         command = "full"
         await self.coordinator.setalarm(command)
@@ -91,7 +91,7 @@ class TC20EAlarmPanel(
             self._attr_state = ALARM_STATE_TO_HA_STATE[alarm_state]
         self.async_write_ha_state()
 
-    async def async_alarm_arm_home(self) -> None:
+    async def async_alarm_arm_home(self, code=None) -> None:
         """Arm alarm away."""
         command = "partial"
         await self.coordinator.setalarm(command)
