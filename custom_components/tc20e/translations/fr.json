@@ -1,0 +1,19 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Compte déjà configuré"
+        },
+        "error": {
+            "auth_error": "Identifiant ou mot de passe incorrect",
+            "connection_error": "Echec de la connexion"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "username": "Identifiant",
+                    "password": "Mot de passe"
+                }
+            }
+        }
+    }
+}
