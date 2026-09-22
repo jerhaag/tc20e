@@ -127,11 +127,3 @@ class TC20EAlarmPanel(
         # The coordinator updated self.coordinator.alarmstatus; just notify HA.
         self.async_write_ha_state()
         super()._handle_coordinator_update()
-
-    @property
-    def available(self) -> bool:
-        """Return True if entity is available.
-
-        Currently always True as long as the integration is loaded.
-        """
-        return True
