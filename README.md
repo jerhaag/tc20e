@@ -1,7 +1,7 @@
 [![Total Connect 2.0E](https://github.com/jerhaag/tc20e/blob/main/icons/logo.png)](https://tc20e.total-connect.eu/)
 
 [![version_badge](https://img.shields.io/github/v/release/jerhaag/tc20e?label=Latest%20release&style=for-the-badge&cacheSeconds=3600)](https://github.com/jerhaag/tc20e/releases/latest)
-[![download_badge](https://img.shields.io/github/downloads/jerhaag/tc20e/total?style=for-the-badge&cacheSeconds=3600)](https://github.com/jerhaag/tc20e/releases/latest)
+[![download_badge](https://img.shields.io/github/downloads/jerhaag/tc20e/total.svg?style=for-the-badge&cacheSeconds=3600)](https://github.com/jerhaag/tc20e/releases/latest)
 
 # Home Assistant Integration for Total Connect Europe 2.0E
 This integration interacts with TC20e Total Connect Europe Wesbite https://tc20e.total-connect.eu/
