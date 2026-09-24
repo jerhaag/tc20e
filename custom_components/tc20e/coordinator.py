@@ -145,17 +145,21 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
 
         if response.status == 200:
             try:
-                json = await response.json()
-                json_id = json["id"]
-                json_status = json["status"]
+                payload = await response.json()
 
-            except aiohttp.ContentTypeError as error:
-                LOGGER.debug("ContentTypeError on ok status: %s", error.message)
+            except (aiohttp.ContentTypeError, ValueError) as error:
+                LOGGER.debug("Invalid JSON in 200 response: %s", error)
                 response_text = await response.text()
                 LOGGER.debug("Response (200) text is: %s", response_text)
                 await self._logout()
                 raise UpdateFailed from error
 
+            if not isinstance(payload, dict):
+                LOGGER.warning("Unexpected TC20E command response: %s", payload)
+                await self._logout()
+                raise UpdateFailed("TC20E command response was not an object")
+
+            json_status = payload.get("status")
             if json_status != "success":
                 LOGGER.warning(
                     "TC20E command was not accepted: %s",
@@ -166,7 +170,18 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
                     f"TC20E command was not accepted: {json_status}"
                 )
 
-            LOGGER.debug("Command successfull, URL: %s", url)
+            json_id = payload.get("id")
+            if json_id is None:
+                LOGGER.warning(
+                    "TC20E successful command response is missing id: %s",
+                    payload,
+                )
+                await self._logout()
+                raise UpdateFailed(
+                    "TC20E successful command response is missing id"
+                )
+
+            LOGGER.debug("Command successful, URL: %s", url)
 
             statuscode = 0
             poll_attempts = 0
@@ -205,19 +220,37 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
                     LOGGER.debug("Command response status: %s", response.status)
 
                     try:
-                        json = await response.json()
-                        statuscode = json["statusCode"]
-                        messagekey = json["messageKey"]
-                        errorcode = json["errorCode"]
+                        payload = await response.json()
 
-                    except aiohttp.ContentTypeError as error:
-                        LOGGER.debug(
-                            "ContentTypeError on ok status: %s", error.message
-                        )
+                    except (aiohttp.ContentTypeError, ValueError) as error:
+                        LOGGER.debug("Invalid JSON in polling response: %s", error)
                         response_text = await response.text()
                         LOGGER.debug("Response (200) text is: %s", response_text)
                         await self._logout()
                         raise UpdateFailed from error
+
+                    if not isinstance(payload, dict):
+                        LOGGER.warning(
+                            "Unexpected TC20E polling response: %s", payload
+                        )
+                        await self._logout()
+                        raise UpdateFailed(
+                            "TC20E polling response was not an object"
+                        )
+
+                    statuscode = payload.get("statusCode")
+                    messagekey = payload.get("messageKey")
+                    errorcode = payload.get("errorCode")
+
+                    if statuscode is None:
+                        LOGGER.warning(
+                            "TC20E polling response is missing statusCode: %s",
+                            payload,
+                        )
+                        await self._logout()
+                        raise UpdateFailed(
+                            "TC20E polling response is missing statusCode"
+                        )
 
                     LOGGER.debug("Command response Status Code: %s", statuscode)
 
@@ -242,17 +275,30 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
 
         if response.status == 201:
             try:
-                json = await response.json()
-                statuscode = json["statusCode"]
-                messagekey = json["messageKey"]
-                errorcode = json["errorCode"]
+                payload = await response.json()
 
-            except aiohttp.ContentTypeError as error:
-                LOGGER.debug("ContentTypeError on ok status: %s", error.message)
+            except (aiohttp.ContentTypeError, ValueError) as error:
+                LOGGER.debug("Invalid JSON in 201 response: %s", error)
                 response_text = await response.text()
                 LOGGER.debug("Response (200) text is: %s", response_text)
                 await self._logout()
                 raise UpdateFailed from error
+
+            if not isinstance(payload, dict):
+                LOGGER.warning("Unexpected TC20E 201 response: %s", payload)
+                await self._logout()
+                raise UpdateFailed("TC20E 201 response was not an object")
+
+            statuscode = payload.get("statusCode")
+            messagekey = payload.get("messageKey")
+            errorcode = payload.get("errorCode")
+
+            if statuscode is None:
+                LOGGER.warning(
+                    "TC20E 201 response is missing statusCode: %s", payload
+                )
+                await self._logout()
+                raise UpdateFailed("TC20E 201 response is missing statusCode")
 
             if statuscode == 6:
                 LOGGER.debug("Status code is 6 -> Toolong, aborting")
@@ -350,6 +396,7 @@ class TC20EUpdateCoordinator(DataUpdateCoordinator):
             raise CannotConnectError
 
         LOGGER.debug("Session id retrieved")
+
 
 class UnauthorizedError(HomeAssistantError):
     """Exception to indicate an error in authorization."""
